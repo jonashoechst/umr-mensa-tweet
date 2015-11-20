@@ -1,5 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from xml.dom import minidom
-import urllib.request
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib import urlopen
 import re, tweepy, json
 
 def removeBracketText(string):
@@ -7,7 +13,7 @@ def removeBracketText(string):
     
 def replacePrice(string):
     string = re.sub("nur ", "(", string)
-    string = re.sub(" Euro", "€)", string)
+    string = re.sub(" Euro", u"€)", string)
     return string
     
 def reformatString(string):
@@ -18,7 +24,7 @@ def reformatString(string):
     return string
     
 def getFeedMenues(feedUrl):
-    feedConnection = urllib.request.urlopen(feedUrl)
+    feedConnection = urlopen(feedUrl)
     menues = []
     xmlData = feedConnection.read()
     xml = minidom.parseString(xmlData)
