@@ -46,15 +46,12 @@ def getApi(service):
     api = tweepy.API(auth)
     return api
     
-def timelineIsOutdated(api, menues, tweet_count=3):
-    for tweet in api.home_timeline(count=tweet_count):
-        if tweet.text in menues:
-            return False
-    return True
-    
 def tweetMenues(api, menues):
+    count = 0
     for menu in reversed(menues):
-        api.update_status(menu)
+        try: api.update_status(menu); count += 1
+        except tweepy.error.TweepError: pass
+    return count
     
 if __name__ == "__main__":
     services = loadServices("config.json")
@@ -62,10 +59,7 @@ if __name__ == "__main__":
     for s in services:
         menues = getFeedMenues(s.feed_url)
         api = getApi(s)
-        if timelineIsOutdated(api, menues):
-            print("Timeline outdated! Updating...")
-            tweetMenues(api, menues)
-        else:
-            print("Timeline is up-to-date.")
+        new_tweets = tweetMenues(api, menues)
+        print("Inserted "+str(new_tweets)+" tweets for "+s.name if hasattr(s, 'name') else s.feed_url)
         
-    print("umr-mensa-tweet finished successfully.")
+    print("\numr-mensa-tweet finished successfully.")

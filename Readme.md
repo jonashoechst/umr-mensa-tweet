@@ -25,3 +25,5 @@ umr-mensa-tweet relies onto the tweepy python twitter library [https://github.co
 can do whatever you want with this stuff. If we meet some day, and you think
 this stuff is worth it, you can buy me a beer in return. Jonas Höchst
 ----------------------------------------------------------------------------
+
+Studentenwerk.png is taken from http://www.studentenwerk-marburg.de
