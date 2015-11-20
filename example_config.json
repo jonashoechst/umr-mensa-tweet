@@ -1,0 +1,10 @@
+[
+    {
+        "consumer_key" : "...",
+        "consumer_secret" : "...",
+        "access_token" : "...",
+        "access_token_secret" : "...",
+        "feed_url" : "http://www.studentenwerk-marburg.de/navimeta/rss-feeds/rssfeedspeiseplanmensalahnberge.html",
+        "name" : "Mensa Lahnberge"
+    }
+]
