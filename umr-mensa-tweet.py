@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from xml.dom import minidom
 try:
     from urllib.request import urlopen
 except ImportError:
     from urllib import urlopen
-import re, tweepy, json
+import re, tweepy, json, sys, logging
+from datetime import date
 
 def removeBracketText(string):
     return re.sub("[\(].*?[\)]", "", string)
@@ -21,9 +21,13 @@ def reformatString(string):
     string = re.sub(" , ",", ", string) # remove blanks in front of commas
     string = re.sub("- | -"," - ", string) # create double blanks for single blanked dashes
     string = re.sub(" +"," ", string) # remove double blanks
-    string += " #Marburg #Mensa"
+    string += u" #Marburg #Mensa #"+dayOfWeekString()
+    string = " ".join(string[:140].split(' ')[:-1]) if len(string)>140 else string
     return string
-    
+
+def dayOfWeekString():
+    return ("Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag")[date.today().weekday()]
+
 def getFeedMenues(feedUrl):
     feedConnection = urlopen(feedUrl)
     menues = []
@@ -57,16 +61,25 @@ def tweetMenues(api, menues):
     count = 0
     for menu in reversed(menues):
         try: api.update_status(menu); count += 1
-        except tweepy.error.TweepError: pass
+        except tweepy.error.TweepError as e: 
+            logging.warn("Tweet could not be send: "+str(e)) #+"("+str(e[0][0]["code"])+")")
     return count
     
 if __name__ == "__main__":
+    # create & save a print logger
+    logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%d %H:%M', format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    printLog = logging.getLogger().handlers[0]
+    
+    # create a file logger and add print logger
+    logging.basicConfig(filename='umr-mensa-tweet.log', level=logging.INFO, datefmt='%Y-%m-%d %H:%M', format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    logging.getLogger().addHandler(printLog)
+    
     services = loadServices("config.json")
     
     for s in services:
         menues = getFeedMenues(s.feed_url)
         api = getApi(s)
         new_tweets = tweetMenues(api, menues)
-        print("Inserted "+str(new_tweets)+" tweets for "+s.name if hasattr(s, 'name') else s.feed_url)
+        logging.info("Inserted "+str(new_tweets)+" tweets for "+s.name if hasattr(s, 'name') else s.feed_url)
         
-    print("\numr-mensa-tweet finished successfully.")
+    logging.info("umr-mensa-tweet finished successfully.")
