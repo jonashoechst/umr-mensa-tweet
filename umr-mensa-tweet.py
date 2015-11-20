@@ -21,6 +21,7 @@ def reformatString(string):
     string = re.sub(" , ",", ", string) # remove blanks in front of commas
     string = re.sub("- | -"," - ", string) # create double blanks for single blanked dashes
     string = re.sub(" +"," ", string) # remove double blanks
+    string += " #Marburg #Mensa"
     return string
     
 def getFeedMenues(feedUrl):
