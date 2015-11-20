@@ -5,7 +5,7 @@ try:
     from urllib.request import urlopen
 except ImportError:
     from urllib import urlopen
-import re, tweepy, json, sys, logging
+import re, tweepy, json, sys, logging, os
 from datetime import date
 
 def removeBracketText(string):
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     logging.basicConfig(filename='umr-mensa-tweet.log', level=logging.INFO, datefmt='%Y-%m-%d %H:%M', format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
     logging.getLogger().addHandler(printLog)
     
-    services = loadServices("config.json")
+    services = loadServices("/".join(os.path.realpath(__file__).split("/")[:-1])+"/config.json")
     
     for s in services:
         menues = getFeedMenues(s.feed_url)
