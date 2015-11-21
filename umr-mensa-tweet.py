@@ -34,12 +34,15 @@ def getFeedMenues(feedUrl):
     xmlData = feedConnection.read()
     xml = minidom.parseString(xmlData)
     for item in xml.getElementsByTagName("item"):
-        menue = item.getElementsByTagName("description")[0].childNodes[0].nodeValue + ": "
-        menue += item.getElementsByTagName("title")[0].childNodes[0].nodeValue
-        menue = removeBracketText(menue)
-        menue = replacePrice(menue)
-        menue = reformatString(menue)
-        menues.append(menue)
+        try:
+            menue = item.getElementsByTagName("description")[0].childNodes[0].nodeValue + ": "
+            menue += item.getElementsByTagName("title")[0].childNodes[0].nodeValue
+            menue = removeBracketText(menue)
+            menue = replacePrice(menue)
+            menue = reformatString(menue)
+            menues.append(menue)
+        except IndexError:
+            logging.warn("No description/title found for item: "+item.toxml())
         
     return menues
 
