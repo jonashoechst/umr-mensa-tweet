@@ -5,7 +5,7 @@ try:
     from urllib.request import urlopen
 except ImportError:
     from urllib import urlopen
-import re, tweepy, json, sys, logging, os
+import re, tweepy, json, sys, logging, os, time, random
 from datetime import date
 
 def removeBracketText(string):
@@ -63,6 +63,7 @@ def getApi(service):
 def tweetMenues(api, menues):
     count = 0
     for menu in reversed(menues):
+        time.sleep(random.randint(15,45))
         try: api.update_status(menu); count += 1
         except tweepy.error.TweepError as e: 
             logging.warn("Tweet could not be send: "+str(e)) #+"("+str(e[0][0]["code"])+")")
